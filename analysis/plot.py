@@ -141,9 +141,9 @@ def make_histograms(datastruct, variables,
 
                     # temp: skip files that do not have their corresponding external variable file.
                     # in most cases, an error should be thrown in this case, but suppress for quick tests
-                    if external_variables is not None:
-                        external_file_dict = find_external_files(batch_sampledict[process_key], external_variables, verbose=True)
-                        batch_sampledict[process_key] = [k for k, v in external_file_dict.items() if v is not None]
+                    #if external_variables is not None:
+                    #    external_file_dict = find_external_files(batch_sampledict[process_key], external_variables, verbose=True)
+                    #    batch_sampledict[process_key] = [k for k, v in external_file_dict.items() if v is not None]
 
                     # read events
                     events = read_sampledict(batch_sampledict, treename=treename,
@@ -260,9 +260,6 @@ def make_histograms(datastruct, variables,
                                 # optional: blind some histograms
                                 # note: this is done per variable rather than upfront,
                                 #       because the blinding may depend on the variable.
-                                #       for example, when plotting mH1, we want the mask 'mH1 outside mass window',
-                                #       when plotting mH2, we want 'mH2 outside mass window',
-                                #       and when plotting the double mass, we want 'mH1 or mH2 outside mass window'.
                                 if blinding is not None:
                                     if variable.name not in blinding.keys():
                                         msg = f'Blinding was specified but variable {variable.name} not found in the dict.'
@@ -343,9 +340,9 @@ def make_events(dtypedict,
 
             # temp: skip files that do not have their corresponding external variable file.
             # in most cases, an error should be thrown in this case, but suppress for quick tests
-            if external_variables is not None:
-                external_file_dict = find_external_files(files, external_variables, verbose=True)
-                files = [k for k, v in external_file_dict.items() if v is not None]
+            #if external_variables is not None:
+            #    external_file_dict = find_external_files(files, external_variables, verbose=True)
+            #    files = [k for k, v in external_file_dict.items() if v is not None]
 
             # read events
             this_sampledict = {process_key: files}

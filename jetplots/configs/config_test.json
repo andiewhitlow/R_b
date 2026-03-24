@@ -1,0 +1,8 @@
+{
+    "test": {
+        "variables": [
+            "variables/variables_jets.json"
+        ],
+        "outputdir": "output_test/test"
+    }
+}

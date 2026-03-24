@@ -17,10 +17,18 @@ if __name__=='__main__':
 
     # read command line args
     parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--samples', required=True)
     parser.add_argument('-c', '--config', required=True, nargs='+')
     parser.add_argument('-k', '--keys', default=None, nargs='+')
     parser.add_argument('-r', '--runmode', default='local', choices=['local', 'condor'])
     args = parser.parse_args()
+
+    # read samples
+    with open(args.samples, 'r') as f:
+        samples = json.load(f)
+    print(f'Read sample list: {args.samples}.')
+    print(f'Found following samples:')
+    print(json.dumps(samples, indent=2))
 
     # read config(s)
     config = {}
@@ -40,8 +48,8 @@ if __name__=='__main__':
 
     # make base command
     base_args = {
-        'sim': ['/eos/user/l/llambrec/aleph-data/ntuples-withksloose/eventlevel/mc/output_qqb_*.root'],
-        'data': ['/eos/user/l/llambrec/aleph-data/ntuples-withksloose/eventlevel/data/output_data_*.root'],
+        'sim': samples.get('sim', None),
+        'data': samples.get('data', None),
         'variables': ['variables/variables_event.json'],
         'outputdir': 'output_test',
         'objectselection': ['selections/selection_jets.json'],
@@ -62,7 +70,8 @@ if __name__=='__main__':
         # loop over arguments
         for arg, val in this_args.items():
             # parse argument
-            if isinstance(val, bool) and val: cmd += f' --{arg}'
+            if val is None: continue
+            elif isinstance(val, bool) and val: cmd += f' --{arg}'
             elif isinstance(val, str): cmd += f' --{arg} {val}'
             elif isinstance(val, list): cmd += f' --{arg} {" ".join(val)}'
             else: raise Exception(f'Value of argument {arg} not recognized: {val} ({type(val)})')
