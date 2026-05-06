@@ -1,0 +1,4 @@
+{
+    "sim": ["/HEP/data/share/aleph/ntuples-withksloose/eventlevel/mc/output_qqb_*.root"],
+    "data": ["/HEP/data/share/aleph/ntuples-withksloose/eventlevel/data/output_data_*.root"]
+}

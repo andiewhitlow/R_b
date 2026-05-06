@@ -33,6 +33,7 @@ from analysis.systematics import get_weight_variation
 from analysis.systematics import format_systematic_name
 from analysis.external_variables import read_external_variables
 from analysis.external_variables import find_external_files
+from analysis.thrust import addthrustvariables
 from plotting.plot import plot
 
 # global pyplot settings
@@ -198,6 +199,10 @@ def make_histograms(datastruct, variables,
                         events[process_key] = events[process_key][mask]
                         nselected = len(events[process_key])
                         print(f'Selected {nselected} out of {nbefore} entries.')
+
+                # compute thrust only on selected events
+                print('Computing thrust variables...')
+                events[process_key] = addthrustvariables(events[process_key])
 
                 # recalculate regions
                 this_regions = regions
@@ -525,13 +530,15 @@ def plot_hists_default(hists_combined, variables, outputdir,
 
             # modify label dict to include the yield per process
             this_labeldict = labeldict.copy()
-            print_yield = False # maybe later add as argument
+            print_yield = True # maybe later add as argument
             if print_yield:
+                total_yield = sum(np.sum(h[0]) for h in hists_sim_nominal.values())
                 for process_key, hist in hists_sim_nominal.items():
                     old_label = labeldict.get(process_key, None)
                     if old_label is None: continue
                     process_yield = np.sum(hist[0])
-                    new_label = old_label + ' ({:.2e})'.format(process_yield)
+                    pct = 100.0 * process_yield / total_yield if total_yield > 0 else 0.0
+                    new_label = old_label + f' ({pct:.1f}%)'
                     this_labeldict[process_key] = new_label
 
             # set y-axis title
@@ -580,7 +587,7 @@ def plot_hists_default(hists_combined, variables, outputdir,
             axs[0].set_ylim((0, axs[0].get_ylim()[1]*1.4))
             ncols = 1
             if 'score_isB' in variable.variable: ncols = 3 # dirty hard-coded hack
-            axs[0].legend(loc='upper right', fontsize=17, ncols=ncols)
+            axs[0].legend(loc='upper right', fontsize=12, ncols=ncols)
             #if len(regions.keys())>1:
             #    axs[0].text(0.05, 0.9, region_name, ha='left', va='top', fontsize=12,
             #        transform=axs[0].transAxes)
@@ -644,7 +651,7 @@ def plot_hists_default(hists_combined, variables, outputdir,
                     if not normalize: ymin = np.min(histarray[np.nonzero(histarray)])
                     else: ymin = axs[0].get_ylim()[0]
                     axs[0].set_ylim((ymin, axs[0].get_ylim()[1]**1.4))
-                axs[0].legend(loc='upper right', fontsize=17, ncols=ncols)
+                axs[0].legend(loc='upper right', fontsize=12, ncols=ncols)
                 #if len(regions.keys())>1:
                 #    axs[0].text(0.05, 0.9, region_name, ha='left', va='top', fontsize=12,
                 #        transform=axs[0].transAxes)
@@ -869,6 +876,9 @@ if __name__=='__main__':
 
     # define variables to read
     branches_to_read = []
+    # add branches needed for thrust computation
+    branches_to_read += ['Jets_px', 'Jets_py', 'Jets_pz']
+
     # add masks
     if regions is not None:
         if not args.recalculate_regions:
