@@ -1,12 +1,10 @@
 # Tracking-smearing stress test
 
 This directory contains the inference and plotting workflow used to measure how
-the Rb single- and double-tag efficiencies respond to tracking smearing.
+the single- and double-tag efficiencies respond to tracking smearing.
 
 The repository includes the inference support, smearing cards, current tag
-definitions, the constituent-based thrust calculation, and plotting code. Large ROOT
-files, ONNX model files, nominal score pickles, and generated outputs are not
-stored in Git.
+definitions, the constituent-based thrust calculation, and plotting code.
 
 ## Setup
 
@@ -56,23 +54,3 @@ For a five-file preview, append `--limit-files 5`.
 The analyzer produces single- and double-tag efficiency tables, migration
 tables, b/c/uds heatmaps, a migration summary plot, and a selection audit.
 
-## Analysis definition
-
-The current working points are:
-
-```text
-Q: B > 0.855
-S: 0.601 < B <= 0.855
-L: 0.396 < B <= 0.601
-C: B <= 0.396 and C > 0.605
-X: B <= 0.396 and C <= 0.524
-U: otherwise
-```
-
-Thrust is calculated from jet constituents before jet selection. The event and jet requirements are
-implemented in `make_heatmaps.py`; exactly two selected jets are required for
-the efficiency calculation. UU events and U-containing displayed categories
-are omitted from the reported tag tables and heatmaps.
-
-`oscar_job_template.sbatch` is an example Slurm submission script. On lxplus,
-wrap the same commands in the collaboration's normal HTCondor submission.
