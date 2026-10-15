@@ -59,3 +59,9 @@ Run with `python plot.py -h` to see a list of all available options.
 - The option `-r local` means running interactivaly in the terminal.
 It can take a few minutes to run, as there are about 1M simulated events and about 10M data events that need to be loaded into memory.
 Alternatively, use `-r condor` to run it as a condor job instead.
+
+### Tracking-smearing study
+
+The reproducible tracking-smearing inference, stress-test cards, efficiency
+tables, and heatmap workflow are documented in
+[`evaluation/tracking_smearing_stress/README.md`](evaluation/tracking_smearing_stress/README.md).
